@@ -1,11 +1,9 @@
 <template>
-  <div class="row note-list">
-    <NoteView
-      v-for="(note, index) in notes"
-      :class="getClass"
-      :key="index"
-      :note="note"
-      @remove-note="$emit('remove-note', index)" />
+  <div>
+    <note-view
+      v-for="note in notes"
+      :key="note.id"
+      :note="note" />
   </div>
 </template>
 
@@ -19,15 +17,6 @@ export default {
       type: Array,
       required: true,
     },
-    expanded: {
-      type: Boolean,
-      default: false,
-    }
   },
-  computed: {
-    getClass() {
-      return [this.expanded ? 'col-12' : 'w-50']
-    }
-  }
 }
 </script>

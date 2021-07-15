@@ -1,25 +1,22 @@
 <template>
-  <div>
-    <div class="card mb-4">
-      <div class="card-body">
-        <h3 class="card-title text-primary clearfix">
-          <span v-if="!editingTitle" @click="editTitle">{{ note.title }}</span>
-          <input
-            v-else
-            v-model="note.title"
-            v-focus
-            @click="editTitle"
-            @keydown.enter.escape="editTitleComplete"
-            @blur="editTitleComplete">
+  <div
+    class="d-flex p-2 mb-2 border rounded"
+    :class="!expanded ? '' : 'flex-column align-items-start' "
+    @click="expanded = !expanded"
+  >
+    <template v-if="!expanded">
+      <span>{{ note.title }}</span>
+      <span class="flex-grow-1 ms-2 text-muted">{{ note.description }}</span>
+    </template>
+    <template v-else>
+      <div class="d-flex align-self-stretch justify-content-between">
+        <h3 @click.stop="edit('title')">{{ note.title }}</h3>
 
-          <span
-            @click="$emit('remove-note')"
-            class="btn-delete text-muted">&cross;</span>
-        </h3>
-        <p>{{ note.description }}</p>
-        <span class="text-muted">{{ note.date }}</span>
+        <span class="text-danger pointer" @click.stop="remove">&cross;</span>
       </div>
-    </div>
+      <p class="mb-0" @click.stop="edit('description')">{{ note.description }}</p>
+      <p class="text-muted mb-0">{{ note.date.toString() }}</p>
+    </template>
   </div>
 </template>
 
@@ -39,25 +36,29 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      editingTitle: false,
-    }
-  },
+  data: () => ({
+    expanded: false
+  }),
   methods: {
-    editTitle() {
-      this.editingTitle = true
+    remove() {
+      this.$store.commit('removeNote', this.note)
     },
-    editTitleComplete() {
-      this.editingTitle = false
-    }
-  },
+    edit(key) {
+      const value = prompt(`Enter new ${key} for note "${this.note.title}"`)
+      if (value) {
+        this.$store.commit('editNote', {
+          id: this.note.id,
+          [key]: value,
+        })
+      }
+    },
+  }
 }
 </script>
 
-<style scoped>
-.btn-delete {
-  float: right;
+<style>
+.pointer {
   cursor: pointer;
+  user-select: none;
 }
 </style>
