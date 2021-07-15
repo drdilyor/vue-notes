@@ -1,12 +1,13 @@
 <template>
   <div
-    class="d-flex p-2 mb-2 border rounded"
-    :class="!expanded ? '' : 'flex-column align-items-start' "
+    class="d-flex align-items-start p-2 mb-2 border rounded"
+    :class="expanded && 'flex-column'"
     @click="expanded = !expanded"
   >
     <template v-if="!expanded">
       <span>{{ note.title }}</span>
       <span class="flex-grow-1 ms-2 text-muted">{{ note.description }}</span>
+      <note-label v-for="label in note.labels.slice(0, 1)" :key="label.id" :label="$store.getters.labelsById[label]" />
     </template>
     <template v-else>
       <div class="d-flex align-self-stretch justify-content-between">
@@ -16,12 +17,16 @@
       </div>
       <p class="mb-0" @click.stop="edit('description')">{{ note.description }}</p>
       <p class="text-muted mb-0">{{ note.date.toString() }}</p>
+      <note-label v-for="label in note.labels" :key="label.id" :label="$store.getters.labelsById[label]" />
     </template>
   </div>
 </template>
 
 <script>
+import NoteLabel from './NoteLabel.vue'
+
 export default {
+  components: {NoteLabel},
   directives: {
     focus: {
       // directive definition
