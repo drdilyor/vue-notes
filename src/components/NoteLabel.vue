@@ -1,5 +1,5 @@
 <template>
-  <span class="px-2 rounded" :style="labelStyle">{{ label.text }}</span>
+  <span class="px-2 rounded me-2" :style="labelStyle">{{ label.text }}</span>
 </template>
 
 <script>

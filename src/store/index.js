@@ -20,10 +20,11 @@ const store = new Vuex.Store({
     setNotes(state, notes) {
       state.notes = notes
     },
-    createNote(state, note) {
+    createNote(state, {title, description}) {
       state.notes.push({
+        title,
+        description,
         labels: [],
-        ...note,
         id: nextNoteId(),
         date: new Date,
       })
@@ -34,12 +35,23 @@ const store = new Vuex.Store({
     editNote(state, {id, ...newNote}) {
       state.notes = state.notes.map(i => i.id == id ? {...i, ...newNote} : i)
     },
+    setNoteLabels(state, {noteId, labels}) {
+      state.notes.filter(i => i.id == noteId).forEach(i => i.labels = labels)
+    },
     addLabel(state, {text, color}) {
       console.assert(/#[0-9a-fA-F]{6}/.test(color))
+      // Caller must check if text is unique
       state.labels.push({
         text,
         color,
         id: nextLabelId(),
+      })
+    },
+    removeLabel(state, id) {
+      state.labels = state.labels.filter(i => i.id != id)
+      // remove the label from notes
+      state.notes.forEach(note => {
+        note.labels = note.labels.filter(i => i.id != id)
       })
     }
   },
@@ -49,6 +61,9 @@ const store = new Vuex.Store({
     labelsById(state) {
       return state.labels.reduce((result, i) => (result[i.id] = i, result), {})
     },
+    labelsByText(state) {
+      return state.labels.reduce((result, i) => (result[i.text] = i, result), {})
+    }
   },
   modules: {
   },

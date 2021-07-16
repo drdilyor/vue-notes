@@ -1,8 +1,11 @@
 <template>
   <div v-if="label">
-    <h2>Notes labeled
-      <note-label class="fs-6" :label="label" />
-    </h2>
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Notes labeled
+        <note-label class="fs-6" :label="label" />
+      </h2>
+      <button class="btn btn-sm btn-danger" @click="remove">Remove</button>
+    </div>
     <note-list :notes="notes"></note-list>
   </div>
 </template>
@@ -22,6 +25,12 @@ export default {
     },
     notes() {
       return this.$store.state.notes.filter(i => i.labels.includes(this.$route.params.id))
+    }
+  },
+  methods: {
+    remove() {
+      this.$store.commit('removeLabel', this.$route.params.id)
+      this.$router.push('/')
     }
   }
 }

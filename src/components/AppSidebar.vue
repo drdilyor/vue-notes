@@ -6,26 +6,32 @@
         <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
       </svg>
     </div>
-    <router-link tag="div" class="sidebar-item" exact-active-class="bg-white text-dark" to="/">
+    <sidebar-link to="/">
       <div class="label-color" />
       All
-    </router-link>
-    <router-link
+    </sidebar-link>
+    <sidebar-link
       v-for="label in $store.state.labels"
       :key="label.id"
-      tag="div"
-      class="sidebar-item"
-      exact-active-class="bg-white text-dark"
       :to="'/label/'+label.id"
     >
       <div class="label-color" :style="{'background-color': label.color}" />
       {{ label.text }}
-    </router-link>
+    </sidebar-link>
+    <sidebar-link to="/create-label">
+      <div class="label-color" />
+      Create label
+    </sidebar-link>
   </div>
 </template>
 
 <script>
+import SidebarLink from './SidebarLink.vue'
+
 export default {
+  components: {
+    SidebarLink,
+  },
   data: () => ({
     open: false,
   }),
@@ -39,6 +45,7 @@ export default {
 
 <style>
 .sidebar {
+  z-index: 1000;
   position: fixed;
   flex-shrink: 0;
   width: 15rem;
@@ -49,11 +56,14 @@ export default {
 
 .sidebar.open {
   transform: none;
+  box-shadow: 0 0 0 100vmax rgba(0,0,0,.5)
+            , 0 0 2rem rgba(0,0,0,.25)
+            ;
 }
 
 @media screen and (min-width: 992px) {
   .sidebar {
-    position: static;
+    position: relative;
     transform: none;
   }
 }
@@ -69,9 +79,6 @@ export default {
 
 .sidebar-item:hover {
   background: rgba(255,255,255,.15);
-}
-.sidebar-item:active {
-  background: rgba(255,255,255,.25);
 }
 
 .label-color {

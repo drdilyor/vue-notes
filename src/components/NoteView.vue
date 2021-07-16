@@ -17,16 +17,30 @@
       </div>
       <p class="mb-0" @click.stop="edit('description')">{{ note.description }}</p>
       <p class="text-muted mb-0">{{ note.date.toString() }}</p>
-      <note-label v-for="label in note.labels" :key="label.id" :label="$store.getters.labelsById[label]" />
+      <div v-if="!labelEditing" @click.stop="labelEditing = true">
+        <note-label
+          v-for="label in note.labels"
+          :key="label.id"
+          :label="$store.getters.labelsById[label]"
+        />
+        <button v-if="!note.labels.length" class="btn btn-sm btn-primary">Add label</button>
+      </div>
+      <div v-else class="align-self-stretch" @click.stop>
+        <note-label-editor :note="note" @done="labelEditing = false" />
+      </div>
     </template>
   </div>
 </template>
 
 <script>
 import NoteLabel from './NoteLabel.vue'
+import NoteLabelEditor from './NoteLabelEditor.vue'
 
 export default {
-  components: {NoteLabel},
+  components: {
+    NoteLabel,
+    NoteLabelEditor,
+  },
   directives: {
     focus: {
       // directive definition
@@ -42,8 +56,15 @@ export default {
     },
   },
   data: () => ({
-    expanded: false
+    expanded: false,
+    labelEditing: false,
   }),
+  watch: {
+    expanded(_, value) {
+      if (value === false)
+        this.labelEditing = false
+    }
+  },
   methods: {
     remove() {
       this.$store.commit('removeNote', this.note)
